@@ -1,30 +1,28 @@
-const propertyModel = require('../models/propertyModel.js');
-const catchAsync = require('../utils/catchAsync.js');
-const appError = require('../utils/appError.js');
+const catchAsync = require('../utils/catchAsync');
+const ServiceLocator = require('../core/ServiceLocator');
+const PropertyService = require('../services/PropertyService');
+
+// Register the PropertyService
+ServiceLocator.register('propertyService', new PropertyService());
+
+// Get the property service instance
+const propertyService = ServiceLocator.get('propertyService');
+
 exports.createProperty = catchAsync(async (req, res) => {
-  const newProperty = await propertyModel.create(req.body);
+  const property = await propertyService.execute('create', req.body);
   res.status(201).json({
     status: 'success',
     data: {
-      property: newProperty,
+      property,
     },
   });
 });
 
 exports.updatePropertyById = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const property = await propertyModel.findByIdAndUpdate(id, req.body, {
-    new: true,
-    runValidators: true,
+  const property = await propertyService.execute('update', {
+    id: req.params.id,
+    updateData: req.body,
   });
-
-  if (!property) {
-    return res.status(404).json({
-      status: 'fail',
-      message: `No property found with ID: ${id}`,
-    });
-  }
-
   res.status(200).json({
     status: 'success',
     data: {
@@ -34,28 +32,7 @@ exports.updatePropertyById = catchAsync(async (req, res) => {
 });
 
 exports.deletePropertyById = catchAsync(async (req, res) => {
-  const { id } = req.params;
-
-  // First check if the property exists
-  const property = await propertyModel.findById(id);
-  if (!property) {
-    return res.status(404).json({
-      status: 'fail',
-      message: `No property found with ID: ${id}`,
-    });
-  }
-
-  // Delete the property
-  const deletedProperty = await propertyModel.findByIdAndDelete(id);
-
-  // Double check if deletion was successful
-  if (!deletedProperty) {
-    return res.status(500).json({
-      status: 'error',
-      message: 'Failed to delete property. Please try again.',
-    });
-  }
-
+  await propertyService.execute('delete', { id: req.params.id });
   res.status(200).json({
     status: 'success',
     message: 'Property deleted successfully',
@@ -64,8 +41,7 @@ exports.deletePropertyById = catchAsync(async (req, res) => {
 });
 
 exports.getAllProperties = catchAsync(async (req, res) => {
-  const properties = await propertyModel.find();
-
+  const properties = await propertyService.execute('getAll');
   res.status(200).json({
     status: 'success',
     results: properties.length,
@@ -76,16 +52,9 @@ exports.getAllProperties = catchAsync(async (req, res) => {
 });
 
 exports.getPropertyById = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const property = await propertyModel.findById(id);
-
-  if (!property) {
-    return res.status(404).json({
-      status: 'fail',
-      message: `No property found with ID: ${id}`,
-    });
-  }
-
+  const property = await propertyService.execute('getById', {
+    id: req.params.id,
+  });
   res.status(200).json({
     status: 'success',
     data: {

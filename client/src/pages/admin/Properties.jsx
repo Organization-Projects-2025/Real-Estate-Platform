@@ -27,8 +27,8 @@ function Properties() {
     buildDate: '',
     status: '',
     features: {
-      bedrooms: '',
-      bathrooms: '',
+    bedrooms: '',
+    bathrooms: '',
       garage: '',
       pool: false,
       yard: false,
@@ -83,7 +83,7 @@ function Properties() {
       try {
         const response = await deleteProperty(propertyId);
         if (response.status === 'success') {
-          setProperties(properties.filter(property => property._id !== propertyId));
+        setProperties(properties.filter(property => property._id !== propertyId));
           setError(null);
         } else {
           setError(response.message || 'Failed to delete property');
@@ -153,17 +153,17 @@ function Properties() {
               <h2 className="text-2xl font-bold text-white mb-4">Edit Property</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-gray-300 mb-2">Title</label>
-                    <input
-                      type="text"
-                      name="title"
-                      value={formData.title}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 rounded bg-[#2a2a2a] text-white"
-                      required
-                    />
-                  </div>
+                <div>
+                  <label className="block text-gray-300 mb-2">Title</label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 rounded bg-[#2a2a2a] text-white"
+                    required
+                  />
+                </div>
                   <div>
                     <label className="block text-gray-300 mb-2">Price</label>
                     <input
@@ -190,45 +190,45 @@ function Properties() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
+                <div>
                     <label className="block text-gray-300 mb-2">Listing Type</label>
                     <select
                       name="listingType"
                       value={formData.listingType}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 rounded bg-[#2a2a2a] text-white"
-                      required
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 rounded bg-[#2a2a2a] text-white"
+                    required
                     >
                       <option value="sale">Sale</option>
                       <option value="rent">Rent</option>
                     </select>
-                  </div>
-                  <div>
+                </div>
+                <div>
                     <label className="block text-gray-300 mb-2">Property Type</label>
-                    <select
+                  <select
                       name="propertyType"
                       value={formData.propertyType}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 rounded bg-[#2a2a2a] text-white"
-                      required
-                    >
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 rounded bg-[#2a2a2a] text-white"
+                    required
+                  >
                       <option value="residential">Residential</option>
                       <option value="commercial">Commercial</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-gray-300 mb-2">Status</label>
-                    <select
-                      name="status"
-                      value={formData.status}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 rounded bg-[#2a2a2a] text-white"
-                      required
-                    >
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-gray-300 mb-2">Status</label>
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 rounded bg-[#2a2a2a] text-white"
+                    required
+                  >
                       <option value="active">Active</option>
-                      <option value="sold">Sold</option>
-                    </select>
-                  </div>
+                    <option value="sold">Sold</option>
+                  </select>
+                </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -268,10 +268,10 @@ function Properties() {
                       required
                     />
                   </div>
-                  <div>
+                <div>
                     <label className="block text-gray-300 mb-2">Country</label>
-                    <input
-                      type="text"
+                  <input
+                    type="text"
                       name="address.country"
                       value={formData.address.country}
                       onChange={handleChange}
@@ -310,11 +310,11 @@ function Properties() {
                       type="date"
                       name="buildDate"
                       value={formData.buildDate}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 rounded bg-[#2a2a2a] text-white"
-                      required
-                    />
-                  </div>
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 rounded bg-[#2a2a2a] text-white"
+                    required
+                  />
+                </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -545,12 +545,12 @@ function Properties() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="space-y-1">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
                           {property.propertyType}
                         </span>
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                           {property.listingType}
-                        </span>
+                      </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
