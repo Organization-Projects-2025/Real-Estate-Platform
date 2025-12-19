@@ -251,7 +251,7 @@ export default function Sell() {
     };
 
     try {
-      const response = await axios.post('http://localhost:8000/api/properties', payload);
+      const response = await axios.post('http://localhost:3000/api/properties', payload);
       setUploadStatus({ success: 'Property successfully listed!' });
       setPendingFiles([]);
       setTimeout(() => {
@@ -376,17 +376,17 @@ export default function Sell() {
         return (
           <div className="space-y-6">
             <div className="relative">
-              <button type="button" className={fileButtonClass}>
+              <label className={fileButtonClass}>
+                <input
+                  className="hidden"
+                  name="media"
+                  type="file"
+                  multiple
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleChange}
+                />
                 Choose Media Files
-              </button>
-              <input
-                className="absolute inset-0 opacity-0 cursor-pointer"
-                name="media"
-                type="file"
-                multiple
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handleChange}
-              />
+              </label>
             </div>
             {Object.keys(uploadStatus).length > 0 && (
               <div className="space-y-2">

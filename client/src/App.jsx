@@ -21,6 +21,7 @@ import CreateAgent from './pages/CreateAgent';
 import ManageAgents from './pages/ManageAgents';
 import Profile from './pages/Profile';
 import Reviews from './pages/Reviews';
+import Notifications from './pages/Notifications';
 import AdminReviews from './pages/admin/Reviews';
 import ReviewForm from './components/ReviewForm';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
@@ -45,6 +46,7 @@ const App = () => {
         <Route path="/manage-agents" element={<ManageAgents />} />
         <Route path="/property/:id" element={<PropertyDetail />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/notifications" element={<Notifications />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/write-review" element={<ReviewForm />} />
 

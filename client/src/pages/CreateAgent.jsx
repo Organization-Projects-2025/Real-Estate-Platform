@@ -50,7 +50,7 @@ const CreateAgent = () => {
         user: formData.email
       };
 
-      const response = await axios.post('http://localhost:8000/api/agents', agentPayload);
+      const response = await axios.post('http://localhost:3000/api/agents', agentPayload);
       
       if (response.data.status === 'success') {
         navigate('/agent');

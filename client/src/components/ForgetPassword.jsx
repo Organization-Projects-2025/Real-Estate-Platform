@@ -20,7 +20,7 @@ const ForgetPassword = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:8000/api/auth/forget-password',
+        'http://localhost:3000/api/auth/forgot-password',
         { email: email.trim() },
         { withCredentials: true }
       );

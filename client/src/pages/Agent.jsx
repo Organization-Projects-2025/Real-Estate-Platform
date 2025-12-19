@@ -19,7 +19,7 @@ const Agent = () => {
 
   const fetchAgents = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/agents');
+      const response = await axios.get('http://localhost:3000/api/agents');
       const agentsData = response.data.data.agents;
       setAgents(agentsData);
       setFilteredAgents(agentsData);

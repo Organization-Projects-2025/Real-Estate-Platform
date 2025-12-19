@@ -15,7 +15,7 @@ function Rent() {
   const propertiesPerPage = 6;
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/properties')
+    fetch('http://localhost:3000/api/properties')
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -43,7 +43,9 @@ function Rent() {
       })
       .catch((err) => {
         console.error('Error fetching properties:', err);
-        setError('Failed to load properties. Please try again later.');
+        // Don't show error - just show empty state
+        setProperties([]);
+        setFilteredProperties([]);
         setLoading(false);
       });
   }, []);

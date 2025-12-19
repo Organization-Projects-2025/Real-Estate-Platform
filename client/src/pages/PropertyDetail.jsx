@@ -31,7 +31,7 @@ const PropertyDetail = () => {
   const [properties, setProperties] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/properties')
+    fetch('http://localhost:3000/api/properties')
       .then((res) => {
         if (!res.ok) {
           throw new Error(`Network response was not ok: ${res.statusText}`);
@@ -56,7 +56,7 @@ const PropertyDetail = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:8000/api/properties/${id}`
+          `http://localhost:3000/api/properties/${id}`
         );
         if (!response.ok) {
           throw new Error(`Failed to fetch property with ID: ${id}`);

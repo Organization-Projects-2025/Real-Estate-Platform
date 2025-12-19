@@ -10,7 +10,7 @@ function Properties() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/properties')
+    fetch('http://localhost:3000/api/properties')
       .then((res) => {
         return res.json();
       })

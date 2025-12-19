@@ -24,7 +24,7 @@ const ManageAgents = () => {
   // Fetch all agents
   const fetchAgents = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/agents');
+      const response = await axios.get('http://localhost:3000/api/agents');
       setAgents(response.data.data.agents);
       setLoading(false);
     } catch (err) {
@@ -52,7 +52,7 @@ const ManageAgents = () => {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/agents', formData);
+      const response = await axios.post('http://localhost:3000/api/agents', formData);
       setAgents(prev => [...prev, response.data.data.agent]);
       setIsModalOpen(false);
       setFormData({
@@ -76,7 +76,7 @@ const ManageAgents = () => {
     e.preventDefault();
     try {
       const response = await axios.patch(
-        `http://localhost:8000/api/agents/${selectedAgent._id}`,
+        `http://localhost:3000/api/agents/${selectedAgent._id}`,
         formData
       );
       setAgents(prev => prev.map(agent => 
@@ -93,7 +93,7 @@ const ManageAgents = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this agent?')) {
       try {
-        await axios.delete(`http://localhost:8000/api/agents/${id}`);
+        await axios.delete(`http://localhost:3000/api/agents/${id}`);
         setAgents(prev => prev.filter(agent => agent._id !== id));
       } catch (err) {
         setError('Failed to delete agent');

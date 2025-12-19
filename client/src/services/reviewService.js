@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api';
+// API Gateway URL - connects to all microservices
+const API_URL = 'http://localhost:3000/api';
 
 // Create axios instance with default config
 const api = axios.create({

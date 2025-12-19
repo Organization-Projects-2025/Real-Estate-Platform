@@ -113,7 +113,7 @@ export default function BecomeAgent() {
       };
 
       const response = await axios.post(
-        'http://localhost:8000/api/agents',
+        'http://localhost:3000/api/agents',
         agentPayload,
         {
           withCredentials: true // Important for cookie-based auth

@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import PropertyCard from '../components/PropertyCard';
 import { useAuth } from '../context/AuthContext';
 
-const API_URL = 'http://localhost:8000/api';
+const API_URL = 'http://localhost:3000/api';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -92,7 +92,7 @@ const Profile = () => {
     setError('');
 
     try {
-      const response = await api.patch('/auth/updateMe', formData);
+      const response = await api.put('/auth/me', formData);
 
       if (response.data.status === 'success') {
         const updatedUser = response.data.data.user;
@@ -106,8 +106,12 @@ const Profile = () => {
           contactEmail: updatedUser.contactEmail || '',
         });
         setEditMode(false);
-        // Refresh the page to update the auth context
-        window.location.reload();
+        // Show success message without redirect
+        const successDiv = document.createElement('div');
+        successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg z-50';
+        successDiv.textContent = 'Profile updated successfully!';
+        document.body.appendChild(successDiv);
+        setTimeout(() => successDiv.remove(), 3000);
       } else {
         throw new Error(response.data.message || 'Failed to update profile');
       }

@@ -21,7 +21,7 @@ const ReviewForm = () => {
 
   const fetchAgents = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/agents');
+      const response = await fetch('http://localhost:3000/api/agents');
       const data = await response.json();
       if (data.status === 'success') {
         setAgents(data.data.agents);
@@ -50,7 +50,7 @@ const ReviewForm = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/reviews', {
+      const response = await fetch('http://localhost:3000/api/reviews', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

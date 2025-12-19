@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api/admin';
+// API Gateway URL - connects to all microservices
+const API_URL = 'http://localhost:3000/api';
 
 // Configure axios to include credentials
 axios.defaults.withCredentials = true;
@@ -8,7 +9,7 @@ axios.defaults.withCredentials = true;
 // User Management
 export const getAllUsers = async () => {
   try {
-    const response = await axios.get(`${API_URL}/users`);
+    const response = await axios.get(`${API_URL}/auth/users`);
     console.log('Raw API response:', response); // Debug log
     return response.data;
   } catch (error) {
@@ -18,22 +19,22 @@ export const getAllUsers = async () => {
 };
 
 export const getUserById = async (userId) => {
-  const response = await axios.get(`${API_URL}/users/${userId}`);
+  const response = await axios.get(`${API_URL}/auth/users/${userId}`);
   return response.data;
 };
 
 export const updateUser = async (userId, userData) => {
-  const response = await axios.patch(`${API_URL}/users/${userId}`, userData);
+  const response = await axios.patch(`${API_URL}/auth/users/${userId}`, userData);
   return response.data;
 };
 
 export const deactivateUser = async (userId) => {
-  const response = await axios.delete(`${API_URL}/users/${userId}`);
+  const response = await axios.delete(`${API_URL}/auth/users/${userId}`);
   return response.data;
 };
 
 export const reactivateUser = async (userId) => {
-  const response = await axios.patch(`${API_URL}/users/${userId}/reactivate`);
+  const response = await axios.patch(`${API_URL}/auth/users/${userId}/reactivate`);
   return response.data;
 };
 

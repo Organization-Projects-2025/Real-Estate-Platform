@@ -1,0 +1,107 @@
+How to Run the Real Estate Microservices
+=========================================
+
+QUICK START (Run Everything with One Command)
+---------------------------------------------
+1 - Open terminal in the microservices folder:
+    cd microservices
+
+2 - Install concurrently (first time only):
+    npm install
+
+3 - Install all microservice dependencies:
+    npm run install:all
+
+4 - Start all services with one command:
+    npm run start:all
+
+5 - Open another terminal for the frontend:
+    cd client
+    npm install
+    npm run dev
+
+All services will be running:
+- API Gateway: http://localhost:3000/api
+- Auth Service: Port 3001 (TCP)
+- Property Service: Port 3002 (TCP)
+- Review Service: Port 3003 (TCP)
+- Agent Service: Port 3004 (TCP)
+- Frontend: http://localhost:5173
+
+
+MANUAL START (Run Each Service Individually)
+---------------------------------------------
+Open 6 separate terminals:
+
+Terminal 1 - Auth Service:
+    cd microservices/auth-service
+    npm install
+    npm run start:dev
+
+Terminal 2 - Property Service:
+    cd microservices/property-service
+    npm install
+    npm run start:dev
+
+Terminal 3 - Review Service:
+    cd microservices/review-service
+    npm install
+    npm run start:dev
+
+Terminal 4 - Agent Service:
+    cd microservices/agent-service
+    npm install
+    npm run start:dev
+
+Terminal 5 - API Gateway (start AFTER all services are running):
+    cd microservices/api-gateway
+    npm install
+    npm run start:dev
+
+Terminal 6 - Frontend:
+    cd client
+    npm install
+    npm run dev
+
+
+TESTING THE API
+---------------
+Test the API Gateway endpoints:
+
+1. Register a user:
+   POST http://localhost:3000/api/auth/register
+   Body: {
+     "firstName": "John",
+     "lastName": "Doe",
+     "email": "john@example.com",
+     "password": "Password123!"
+   }
+
+2. Login:
+   POST http://localhost:3000/api/auth/login
+   Body: {
+     "email": "john@example.com",
+     "password": "Password123!"
+   }
+
+3. Get all properties:
+   GET http://localhost:3000/api/properties
+
+4. Get all agents:
+   GET http://localhost:3000/api/agents
+
+
+REQUIREMENTS
+------------
+- Node.js v18 or higher
+- MongoDB running locally (mongodb://localhost:27017)
+- npm or yarn
+
+
+ARCHITECTURE
+------------
+Frontend (React) --> API Gateway (3000) --> Microservices
+                                        --> Auth Service (3001)
+                                        --> Property Service (3002)
+                                        --> Review Service (3003)
+                                        --> Agent Service (3004)
