@@ -26,6 +26,9 @@ import AdminReviews from './pages/admin/Reviews';
 import ReviewForm from './components/ReviewForm';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import NotFound from './pages/NotFound';
+import DeveloperProperties from './pages/DeveloperProperties';
+import DeveloperPropertiesDetail from './pages/DeveloperPropertiesDetail';
+import ManageDeveloperProperties from './pages/ManageDeveloperProperties';
 
 const App = () => {
   return (
@@ -49,6 +52,9 @@ const App = () => {
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/write-review" element={<ReviewForm />} />
+        <Route path="/developer-properties" element={<DeveloperProperties />} />
+        <Route path="/developer-properties/:developerId" element={<DeveloperPropertiesDetail />} />
+        <Route path="/manage-developer-properties" element={<ManageDeveloperProperties />} />
 
         {/* Protected admin routes */}
         <Route element={<ProtectedAdminRoute />}>

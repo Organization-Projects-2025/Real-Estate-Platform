@@ -27,6 +27,7 @@ const Navbar = () => {
     { name: 'Rent', path: '/rent' },
     { name: 'Sell', path: '/sell' },
     { name: 'Find an Agent', path: '/agent' },
+    { name: 'New Projects', path: '/developer-properties' },
   ];
 
   const authLinks = isAuthenticated

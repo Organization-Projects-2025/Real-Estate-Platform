@@ -9,6 +9,8 @@ import { ReviewController } from './review/review.controller';
 import { ReviewService } from './review/review.service';
 import { AgentController } from './agent/agent.controller';
 import { AgentService } from './agent/agent.service';
+import { DeveloperPropertiesController } from './developerproperties/developerproperties.controller';
+import { DeveloperPropertiesService } from './developerproperties/developerproperties.service';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -48,9 +50,17 @@ dotenv.config();
           port: parseInt(process.env.AGENT_SERVICE_PORT) || 3004,
         },
       },
+      {
+        name: 'DEVELOPERPROPERTIES_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: process.env.DEVELOPERPROPERTIES_SERVICE_HOST || '127.0.0.1',
+          port: parseInt(process.env.DEVELOPERPROPERTIES_SERVICE_PORT) || 3006,
+        },
+      },
     ]),
   ],
-  controllers: [AuthController, PropertyController, ReviewController, AgentController],
-  providers: [AuthService, PropertyService, ReviewService, AgentService],
+  controllers: [AuthController, PropertyController, ReviewController, AgentController, DeveloperPropertiesController],
+  providers: [AuthService, PropertyService, ReviewService, AgentService, DeveloperPropertiesService],
 })
 export class AppModule {}
