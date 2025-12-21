@@ -19,10 +19,12 @@ build/
 .next/
 out/
 
-# Compiled code
-*.js
-!*.config.js
+# Compiled code (in dist folders only, not source)
+/microservices/*/dist/
+/server/dist/
+/client/dist/
 *.d.ts
+!*.config.js
 
 # OS files
 .DS_Store
