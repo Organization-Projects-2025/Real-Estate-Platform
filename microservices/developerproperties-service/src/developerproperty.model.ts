@@ -7,6 +7,9 @@ export class DeveloperProperty extends Document {
   @Prop({ type: Types.ObjectId, ref: 'Developer', required: true })
   developerId: Types.ObjectId;
 
+  @Prop({ type: String })
+  createdBy: string; // User ID who created this property (for access control)
+
   @Prop({ required: true })
   title: string;
 

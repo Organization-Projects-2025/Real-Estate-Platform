@@ -41,12 +41,12 @@ export class DeveloperPropertiesService {
     return firstValueFrom(this.client.send({ cmd: 'getDeveloperPropertyById' }, id));
   }
 
-  async updateProperty(id: string, data: any) {
-    return firstValueFrom(this.client.send({ cmd: 'updateDeveloperProperty' }, { id, updateData: data }));
+  async updateProperty(id: string, data: any, userId?: string) {
+    return firstValueFrom(this.client.send({ cmd: 'updateDeveloperProperty' }, { id, updateData: data, userId }));
   }
 
-  async deleteProperty(id: string) {
-    return firstValueFrom(this.client.send({ cmd: 'deleteDeveloperProperty' }, id));
+  async deleteProperty(id: string, userId?: string) {
+    return firstValueFrom(this.client.send({ cmd: 'deleteDeveloperProperty' }, { id, userId }));
   }
 
   async getPropertiesByDeveloper(developerId: string) {

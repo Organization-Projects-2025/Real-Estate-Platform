@@ -57,6 +57,11 @@ export class AuthController {
     return this.authService.getUserById(userId);
   }
 
+  @MessagePattern({ cmd: 'updateUser' })
+  async updateUser(@Payload() data: { userId: string; userData: any }) {
+    return this.authService.updateUser(data.userId, data.userData);
+  }
+
   @MessagePattern({ cmd: 'deleteUser' })
   async deleteUser(@Payload() userId: string) {
     return this.authService.deleteUser(userId);

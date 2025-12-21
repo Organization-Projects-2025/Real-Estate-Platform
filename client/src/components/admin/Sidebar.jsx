@@ -15,8 +15,6 @@ const navigation = [
   { name: 'Users', href: '/admin/users', icon: UserGroupIcon },
   { name: 'Properties', href: '/admin/properties', icon: BuildingOfficeIcon },
   { name: 'Reviews', href: '/admin/reviews', icon: ChatBubbleLeftRightIcon },
-  { name: 'Reports', href: '/admin/reports', icon: ChartBarIcon },
-  { name: 'Documents', href: '/admin/documents', icon: DocumentTextIcon },
   { name: 'Settings', href: '/admin/settings', icon: Cog6ToothIcon },
 ];
 

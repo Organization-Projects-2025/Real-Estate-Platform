@@ -1,5 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import React from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from './context/AuthContext';
 import AdminLayout from './components/admin/Layout';
 import Dashboard from './pages/admin/Dashboard';
@@ -32,6 +34,19 @@ import ManageDeveloperProperties from './pages/ManageDeveloperProperties';
 
 const App = () => {
   return (
+    <>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Home />} />
@@ -70,6 +85,7 @@ const App = () => {
         {/* 404 route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+    </>
   );
 };
 

@@ -103,25 +103,40 @@ export class DeveloperPropertiesService {
     };
   }
 
-  async updateProperty(id: string, data: any): Promise<any> {
-    const property = await this.developerPropertyModel.findByIdAndUpdate(id, data, {
+  async updateProperty(id: string, data: any, userId?: string): Promise<any> {
+    const property = await this.developerPropertyModel.findById(id);
+    if (!property) {
+      throw new HttpException('Property not found', HttpStatus.NOT_FOUND);
+    }
+    
+    // Check ownership - only developer or owner can edit
+    if (userId && property.createdBy && property.createdBy !== userId) {
+      throw new HttpException('You can only edit your own properties', HttpStatus.FORBIDDEN);
+    }
+
+    const updatedProperty = await this.developerPropertyModel.findByIdAndUpdate(id, data, {
       new: true,
       runValidators: true,
     });
-    if (!property) {
-      throw new HttpException('Property not found', HttpStatus.NOT_FOUND);
-    }
+    
     return {
       status: 'success',
-      data: { property },
+      data: { property: updatedProperty },
     };
   }
 
-  async deleteProperty(id: string): Promise<any> {
-    const property = await this.developerPropertyModel.findByIdAndDelete(id);
+  async deleteProperty(id: string, userId?: string): Promise<any> {
+    const property = await this.developerPropertyModel.findById(id);
     if (!property) {
       throw new HttpException('Property not found', HttpStatus.NOT_FOUND);
     }
+    
+    // Check ownership - only developer or owner can delete
+    if (userId && property.createdBy && property.createdBy !== userId) {
+      throw new HttpException('You can only delete your own properties', HttpStatus.FORBIDDEN);
+    }
+
+    await this.developerPropertyModel.findByIdAndDelete(id);
     return {
       status: 'success',
       message: 'Property deleted successfully',
