@@ -12,6 +12,7 @@ function Register() {
     lastName: '',
     email: '',
     password: '',
+    role: 'user',
   });
   const [message, setMessage] = useState('');
   const [success, setSuccess] = useState(false);
@@ -90,6 +91,24 @@ function Register() {
               className="w-full p-4 bg-[#252525] text-white placeholder-gray-400 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-600"
               required
             />
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-300">Account Type</label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="w-full p-4 bg-[#252525] text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-600"
+                required
+              >
+                <option value="user">Property User</option>
+                <option value="developer">Property Developer</option>
+              </select>
+              <p className="text-xs text-gray-400">
+                {formData.role === 'developer' 
+                  ? 'As a developer, you can list and manage your own properties' 
+                  : 'As a user, you can browse and inquire about properties'}
+              </p>
+            </div>
             <div className="text-sm text-gray-400">
               <p>Password must be at least 8 characters long and contain:</p>
               <ul className="list-disc list-inside mt-1">

@@ -52,4 +52,8 @@ export class AuthService {
   async deleteUser(userId: string): Promise<any> {
     return firstValueFrom(this.authClient.send({ cmd: 'deleteUser' }, userId));
   }
+
+  async getUsersByRole(role: string): Promise<any> {
+    return firstValueFrom(this.authClient.send({ cmd: 'getUsersByRole' }, role));
+  }
 }

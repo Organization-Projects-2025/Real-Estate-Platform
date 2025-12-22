@@ -33,6 +33,7 @@ const Navbar = () => {
   const authLinks = isAuthenticated
     ? [
         { name: 'Become an Agent', path: '/become-agent' },
+        ...(user?.role === 'developer' ? [{ name: 'My Projects', path: '/my-projects' }] : []),
         { name: 'Notifications', path: '/notifications', icon: <FaBell className="text-xl" /> },
         { name: user?.firstName || 'Profile', path: '/profile', icon: <FaUser className="text-xl" /> },
         { name: 'Logout', action: handleLogout, icon: <FaSignOutAlt className="text-xl" /> },

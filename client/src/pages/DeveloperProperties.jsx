@@ -9,11 +9,12 @@ function DeveloperProperties() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/developers')
+    // Fetch users with developer role instead of separate developers
+    fetch('http://localhost:3000/api/auth/users/role/developer')
       .then((res) => res.json())
       .then((data) => {
-        if (data?.data?.developers) {
-          setDevelopers(data.data.developers);
+        if (data?.data?.users) {
+          setDevelopers(data.data.users);
         }
         setLoading(false);
       })
@@ -94,23 +95,14 @@ function DeveloperProperties() {
                     <FaBuilding className="text-4xl text-white" />
                   </div>
                   <h3 className="text-2xl font-bold text-white text-center group-hover:text-[#703BF7] transition-colors">
-                    {developer.name}
+                    {developer.firstName} {developer.lastName}
                   </h3>
-                  {developer.description && (
-                    <p className="text-gray-400 text-sm text-center line-clamp-3">
-                      {developer.description}
-                    </p>
-                  )}
-                  {developer.contact && (
-                    <div className="text-gray-500 text-sm text-center space-y-1">
-                      {developer.contact.email && (
-                        <p>{developer.contact.email}</p>
-                      )}
-                      {developer.contact.phone && (
-                        <p>{developer.contact.phone}</p>
-                      )}
-                    </div>
-                  )}
+                  <div className="text-gray-500 text-sm text-center space-y-1">
+                    <p>{developer.email}</p>
+                    {developer.phoneNumber && (
+                      <p>{developer.phoneNumber}</p>
+                    )}
+                  </div>
                   <div className="flex items-center justify-center gap-2 text-[#703BF7] font-semibold group-hover:gap-4 transition-all">
                     View Properties <FaArrowRight />
                   </div>

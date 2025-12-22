@@ -29,6 +29,9 @@ import NotFound from './pages/NotFound';
 import DeveloperProperties from './pages/DeveloperProperties';
 import DeveloperPropertiesDetail from './pages/DeveloperPropertiesDetail';
 import ManageDeveloperProperties from './pages/ManageDeveloperProperties';
+import MyDeveloperProperties from './pages/MyDeveloperProperties';
+import MyProjects from './pages/MyProjects';
+import ProjectProperties from './pages/ProjectProperties';
 
 const App = () => {
   return (
@@ -55,6 +58,9 @@ const App = () => {
         <Route path="/developer-properties" element={<DeveloperProperties />} />
         <Route path="/developer-properties/:developerId" element={<DeveloperPropertiesDetail />} />
         <Route path="/manage-developer-properties" element={<ManageDeveloperProperties />} />
+        <Route path="/my-developer-properties" element={<MyDeveloperProperties />} />
+        <Route path="/my-projects" element={<MyProjects />} />
+        <Route path="/project/:projectId/properties" element={<ProjectProperties />} />
 
         {/* Protected admin routes */}
         <Route element={<ProtectedAdminRoute />}>

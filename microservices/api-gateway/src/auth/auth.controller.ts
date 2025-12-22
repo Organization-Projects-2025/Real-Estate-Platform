@@ -188,6 +188,19 @@ export class AuthController {
     }
   }
 
+  @Get('users/role/:role')
+  async getUsersByRole(@Param('role') role: string, @Res() res: Response) {
+    try {
+      const result = await this.authService.getUsersByRole(role);
+      return res.status(HttpStatus.OK).json(result);
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        status: 'error',
+        message: error.message || 'Failed to fetch users by role',
+      });
+    }
+  }
+
   @Get('users/:id')
   async getUserById(@Param('id') id: string, @Res() res: Response) {
     try {

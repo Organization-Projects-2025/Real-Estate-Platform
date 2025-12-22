@@ -4,8 +4,11 @@ import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class DeveloperProperty extends Document {
-  @Prop({ type: Types.ObjectId, ref: 'Developer', required: true })
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   developerId: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: 'Project', required: true })
+  projectId: Types.ObjectId;
 
   @Prop({ required: true })
   title: string;
@@ -49,7 +52,7 @@ export class DeveloperProperty extends Document {
   };
 
   @Prop({ type: [String] })
-  media: string[];
+  images: string[];
 
   @Prop({ default: 'active' })
   status: string;
