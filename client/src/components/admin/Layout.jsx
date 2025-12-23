@@ -7,7 +7,7 @@ const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-base-200">
+    <div className="min-h-screen bg-[#0f0f0f]">
       {/* Main Navbar */}
       <Navbar />
 

@@ -8,6 +8,21 @@ function Properties() {
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState({});
+
+  // Fetch dynamic filters
+  useEffect(() => {
+    fetch('http://localhost:3000/api/filters?category=property-type')
+      .then((res) => res.json())
+      .then((data) => {
+        setFilters(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error('Error fetching filters:', err);
+        setFilters([]);
+      });
+  }, []);
 
   useEffect(() => {
     fetch('http://localhost:3000/api/properties')
@@ -32,64 +47,99 @@ function Properties() {
   }, []);
 
   useEffect(() => {
-    if (searchTerm.trim() === '') {
-      setFilteredProperties(properties);
-      return;
+    applyFilters(properties, searchTerm, selectedFilters);
+  }, [searchTerm, properties, selectedFilters]);
+
+  const applyFilters = (propertyList, search, filters) => {
+    let filtered = propertyList;
+
+    // Apply property type filters
+    if (filters.propertyType && filters.propertyType.length > 0) {
+      filtered = filtered.filter((property) =>
+        filters.propertyType.includes(property.propertyType)
+      );
     }
 
-    const lowerSearch = searchTerm.toLowerCase();
-    const filtered = properties.filter((property) => {
-      try {
-        const mainFields = [
-          property.title || '',
-          property.description || '',
-          property.listingType || '',
-          property.propertyType || '',
-          property.subType || '',
-          property.address
-            ? `${property.address.street || ''} ${
-                property.address.city || ''
-              } ${property.address.state || ''} ${
-                property.address.country || ''
-              }`
-            : '',
-          property.area?.sqft?.toString() || '',
-          property.area?.sqm?.toString() || '',
-          property.price?.toString() || '',
-          property.buildDate?.toString() || '',
-          property.status || '',
-        ];
+    // Apply search
+    if (search.trim() !== '') {
+      const lowerSearch = search.toLowerCase();
+      filtered = filtered.filter((property) => {
+        try {
+          const mainFields = [
+            property.title || '',
+            property.description || '',
+            property.listingType || '',
+            property.propertyType || '',
+            property.subType || '',
+            property.address
+              ? `${property.address.street || ''} ${
+                  property.address.city || ''
+                } ${property.address.state || ''} ${
+                  property.address.country || ''
+                }`
+              : '',
+            property.area?.sqft?.toString() || '',
+            property.area?.sqm?.toString() || '',
+            property.price?.toString() || '',
+            property.buildDate?.toString() || '',
+            property.status || '',
+          ];
 
-        const featureFields = property.features
-          ? [
-              property.features.bedrooms?.toString() || '',
-              property.features.bathrooms?.toString() || '',
-              property.features.garage?.toString() || '',
-              property.features.pool?.toString() || '',
-              property.features.yard?.toString() || '',
-              property.features.pets?.toString() || '',
-              property.features.furnished || '',
-              property.features.airConditioning?.toString() || '',
-              property.features.internet?.toString() || '',
-              property.features.electricity?.toString() || '',
-              property.features.water?.toString() || '',
-              property.features.gas?.toString() || '',
-              property.features.wifi?.toString() || '',
-              property.features.security?.toString() || '',
-            ]
-          : [];
+          const featureFields = property.features
+            ? [
+                property.features.bedrooms?.toString() || '',
+                property.features.bathrooms?.toString() || '',
+                property.features.garage?.toString() || '',
+                property.features.pool?.toString() || '',
+                property.features.yard?.toString() || '',
+                property.features.pets?.toString() || '',
+                property.features.furnished || '',
+                property.features.airConditioning?.toString() || '',
+                property.features.internet?.toString() || '',
+                property.features.electricity?.toString() || '',
+                property.features.water?.toString() || '',
+                property.features.gas?.toString() || '',
+                property.features.wifi?.toString() || '',
+                property.features.security?.toString() || '',
+              ]
+            : [];
 
-        return [...mainFields, ...featureFields].some((field) =>
-          field.toLowerCase().includes(lowerSearch)
-        );
-      } catch (err) {
-        console.error('Error filtering property:', property, err);
-        return false;
-      }
-    });
+          return [...mainFields, ...featureFields].some((field) =>
+            field.toLowerCase().includes(lowerSearch)
+          );
+        } catch (err) {
+          console.error('Error filtering property:', property, err);
+          return false;
+        }
+      });
+    }
 
     setFilteredProperties(filtered);
-  }, [searchTerm, properties]);
+  };
+
+  const handleFilterChange = (filterName, isChecked) => {
+    setSelectedFilters((prev) => {
+      const updated = { ...prev };
+      if (!updated.propertyType) {
+        updated.propertyType = [];
+      }
+
+      if (isChecked) {
+        if (!updated.propertyType.includes(filterName)) {
+          updated.propertyType.push(filterName);
+        }
+      } else {
+        updated.propertyType = updated.propertyType.filter(
+          (f) => f !== filterName
+        );
+        if (updated.propertyType.length === 0) {
+          delete updated.propertyType;
+        }
+      }
+
+      return updated;
+    });
+  };
 
   const handleSearch = (term) => {
     setSearchTerm(term);
@@ -160,9 +210,47 @@ function Properties() {
         <h2 className="text-3xl font-bold text-center mb-10">
           Browse Properties
         </h2>
+
+        {/* Dynamic Filters */}
+        {filters.length > 0 && (
+          <div className="mb-8 p-6 bg-[#1a1a1a] rounded-lg border border-[#252525]">
+            <h3 className="text-xl font-semibold mb-4">Filter by Property Type</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {filters.map((filter) => (
+                <label
+                  key={filter._id}
+                  className="flex items-center cursor-pointer hover:text-[#703BF7] transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    checked={
+                      selectedFilters.propertyType?.includes(filter.name) || false
+                    }
+                    onChange={(e) =>
+                      handleFilterChange(filter.name, e.target.checked)
+                    }
+                    className="w-4 h-4 mr-2 rounded border-[#252525]"
+                  />
+                  <span>{filter.name}</span>
+                </label>
+              ))}
+            </div>
+            {Object.keys(selectedFilters).length > 0 && (
+              <button
+                onClick={() => {
+                  setSelectedFilters({});
+                }}
+                className="mt-4 text-sm text-[#703BF7] hover:underline"
+              >
+                Clear All Filters
+              </button>
+            )}
+          </div>
+        )}
+
         {filteredProperties.length === 0 ? (
           <p className="text-center text-gray-400">
-            No properties found. Try adjusting your search.
+            No properties found. Try adjusting your search or filters.
           </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

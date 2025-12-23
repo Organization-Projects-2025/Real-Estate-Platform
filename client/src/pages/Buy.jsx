@@ -9,10 +9,29 @@ function Buy() {
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [error, setError] = useState(null);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState({});
   const propertiesPerPage = 6;
+
+  // Fetch filters from admin service
+  useEffect(() => {
+    fetch('http://localhost:3000/api/filters?category=property-type')
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setFilters(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error('Error fetching filters:', err);
+        setFilters([]);
+      });
+  }, []);
 
   useEffect(() => {
     fetch('http://localhost:3000/api/properties')
@@ -37,16 +56,27 @@ function Buy() {
       })
       .catch((err) => {
         console.error('Error fetching properties:', err);
-        // Don't show error - just show empty state
         setProperties([]);
         setFilteredProperties([]);
         setLoading(false);
       });
   }, []);
 
+  const applyFilters = (propertyList, filters) => {
+    let result = propertyList;
+
+    if (filters.propertyType && filters.propertyType.length > 0) {
+      result = result.filter((property) =>
+        filters.propertyType.includes(property.propertyType)
+      );
+    }
+
+    setFilteredProperties(result);
+  };
+
   useEffect(() => {
     if (searchTerm.trim() === '') {
-      setFilteredProperties(properties);
+      applyFilters(properties, selectedFilters);
       return;
     }
     const lowerSearch = searchTerm.toLowerCase();
@@ -59,8 +89,33 @@ function Buy() {
         property.price?.toString() || '',
       ].some((field) => field.toLowerCase().includes(lowerSearch))
     );
-    setFilteredProperties(filtered);
-  }, [searchTerm, properties]);
+    applyFilters(filtered, selectedFilters);
+  }, [searchTerm, properties, selectedFilters]);
+
+  const handleFilterChange = (filterName, isChecked) => {
+    setSelectedFilters((prev) => {
+      const updated = { ...prev };
+      if (!updated.propertyType) {
+        updated.propertyType = [];
+      }
+
+      if (isChecked) {
+        if (!updated.propertyType.includes(filterName)) {
+          updated.propertyType.push(filterName);
+        }
+      } else {
+        updated.propertyType = updated.propertyType.filter(
+          (f) => f !== filterName
+        );
+        if (updated.propertyType.length === 0) {
+          delete updated.propertyType;
+        }
+      }
+
+      return updated;
+    });
+    setCurrentPage(1);
+  };
 
   useEffect(() => {
     setCurrentPage(1);
@@ -86,17 +141,6 @@ function Buy() {
               ))}
             </div>
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-[#121212] text-[#fff] min-h-screen">
-        <Navbar />
-        <div className="px-6 md:px-16 py-20 text-center">
-          <p className="text-red-400">{error}</p>
         </div>
       </div>
     );
@@ -136,17 +180,57 @@ function Buy() {
           </div>
         </div>
       </section>
+
       <section className="px-6 md:px-16 py-20">
         <h2 className="text-3xl font-bold text-center mb-10">
           Browse Properties for Sale
         </h2>
+
+        {/* Dynamic Filters */}
+        {filters.length > 0 && (
+          <div className="mb-8 p-6 bg-[#1a1a1a] rounded-lg border border-[#252525]">
+            <h3 className="text-xl font-semibold mb-4">Filter by Property Type</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {filters.map((filter) => (
+                <label
+                  key={filter._id}
+                  className="flex items-center cursor-pointer hover:text-[#703BF7] transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    checked={
+                      selectedFilters.propertyType?.includes(filter.name) || false
+                    }
+                    onChange={(e) =>
+                      handleFilterChange(filter.name, e.target.checked)
+                    }
+                    className="w-4 h-4 mr-2 rounded border-[#252525]"
+                  />
+                  <span>{filter.name}</span>
+                </label>
+              ))}
+            </div>
+            {Object.keys(selectedFilters).length > 0 && (
+              <button
+                onClick={() => {
+                  setSelectedFilters({});
+                  setCurrentPage(1);
+                }}
+                className="mt-4 text-sm text-[#703BF7] hover:underline"
+              >
+                Clear All Filters
+              </button>
+            )}
+          </div>
+        )}
+
         {properties.length === 0 ? (
           <p className="text-center text-gray-400">
             No properties for sale are currently available.
           </p>
         ) : filteredProperties.length === 0 ? (
           <p className="text-center text-gray-400">
-            No properties match your search.
+            No properties match your search or selected filters.
           </p>
         ) : (
           <>
@@ -207,6 +291,7 @@ function Buy() {
           </>
         )}
       </section>
+
       {selectedProperty && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
           <div className="bg-[#1a1a1a] p-8 rounded-xl max-w-3xl w-full max-h-[85vh] overflow-y-auto border border-[#252525] shadow-2xl relative">
@@ -220,6 +305,7 @@ function Buy() {
           </div>
         </div>
       )}
+
       <footer className="bg-[#1a1a1a] py-6 text-center text-gray-400">
         <p>© 2025 Tamalk. All Rights Reserved.</p>
       </footer>

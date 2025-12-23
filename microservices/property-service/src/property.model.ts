@@ -71,6 +71,9 @@ export class Features {
 
   @Prop({ required: true })
   security: boolean;
+
+  @Prop({ type: Map, of: Boolean, default: {} })
+  custom: Record<string, boolean>;
 }
 
 @Schema({ timestamps: true })

@@ -1,13 +1,13 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from './context/AuthContext';
 import AdminLayout from './components/admin/Layout';
-import Dashboard from './pages/admin/Dashboard';
 import Users from './pages/admin/Users';
 import Properties from './pages/admin/Properties';
 import Settings from './pages/admin/Settings';
+import Filters from './components/admin/Filters';
 import Home from './pages/Home';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -74,10 +74,11 @@ const App = () => {
         {/* Protected admin routes */}
         <Route element={<ProtectedAdminRoute />}>
           <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Dashboard />} />
+            <Route index element={<Navigate to="/admin/filters" replace />} />
             <Route path="users" element={<Users />} />
             <Route path="properties" element={<Properties />} />
             <Route path="reviews" element={<AdminReviews />} />
+            <Route path="filters" element={<Filters />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Route>
