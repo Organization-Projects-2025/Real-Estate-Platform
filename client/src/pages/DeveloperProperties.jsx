@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { FaBuilding, FaArrowRight } from 'react-icons/fa';
+import { FaBuilding, FaArrowRight, FaMapMarkerAlt } from 'react-icons/fa';
 
 function DeveloperProperties() {
-  const [developers, setDevelopers] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/developers')
+    // Fetch all projects
+    fetch('http://localhost:3000/api/projects')
       .then((res) => res.json())
       .then((data) => {
-        if (data?.data?.developers) {
-          setDevelopers(data.data.developers);
+        if (data?.data?.projects) {
+          setProjects(data.data.projects);
         }
         setLoading(false);
       })
       .catch((err) => {
-        console.error('Error fetching developers:', err);
+        console.error('Error fetching projects:', err);
         setLoading(false);
       });
   }, []);
@@ -58,13 +59,10 @@ function DeveloperProperties() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#121212] via-[#703BF7] to-[#121212] opacity-70"></div>
         <div className="relative max-w-3xl space-y-8 z-10 text-center">
           <h1 className="text-5xl md:text-7xl font-extrabold leading-tight tracking-tight">
-            Properties by{' '}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#703BF7] to-[#fff]">
-              Developers
-            </span>
+            New <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#703BF7] to-[#fff]">Projects</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-300">
-            Explore properties from trusted real estate developers
+            Explore the latest residential and commercial developments
           </p>
         </div>
         <div className="absolute inset-0 pointer-events-none">
@@ -75,44 +73,58 @@ function DeveloperProperties() {
 
       <section className="px-6 md:px-16 py-20">
         <h2 className="text-3xl font-bold text-center mb-10">
-          Browse Developers
+          Featured Developments
         </h2>
-        {developers.length === 0 ? (
+        {projects.length === 0 ? (
           <p className="text-center text-gray-400">
-            No developers found.
+            No projects found.
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {developers.map((developer) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {projects.map((project) => (
               <div
-                key={developer._id}
-                onClick={() => navigate(`/developer-properties/${developer._id}`)}
-                className="bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-[#252525] cursor-pointer group hover:border-[#703BF7]"
+                key={project._id}
+                onClick={() => navigate(`/projects/${project._id}`)}
+                className="bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-[#252525] cursor-pointer group hover:border-[#703BF7] flex flex-col"
               >
-                <div className="p-6 space-y-4">
-                  <div className="flex items-center justify-center w-20 h-20 bg-gradient-to-r from-[#703BF7] to-[#5f2cc6] rounded-full mx-auto group-hover:scale-110 transition-transform duration-300">
-                    <FaBuilding className="text-4xl text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-white text-center group-hover:text-[#703BF7] transition-colors">
-                    {developer.name}
-                  </h3>
-                  {developer.description && (
-                    <p className="text-gray-400 text-sm text-center line-clamp-3">
-                      {developer.description}
-                    </p>
-                  )}
-                  {developer.contact && (
-                    <div className="text-gray-500 text-sm text-center space-y-1">
-                      {developer.contact.email && (
-                        <p>{developer.contact.email}</p>
-                      )}
-                      {developer.contact.phone && (
-                        <p>{developer.contact.phone}</p>
-                      )}
+                <div className="relative h-64 overflow-hidden">
+                  {project.images && project.images.length > 0 ? (
+                    <img
+                      src={project.images[0]}
+                      alt={project.name}
+                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-[#252525] to-[#1a1a1a] flex items-center justify-center">
+                      <FaBuilding className="text-5xl text-gray-600" />
                     </div>
                   )}
-                  <div className="flex items-center justify-center gap-2 text-[#703BF7] font-semibold group-hover:gap-4 transition-all">
-                    View Properties <FaArrowRight />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#000] to-transparent opacity-60"></div>
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-2xl font-bold text-white mb-1 group-hover:text-[#703BF7] transition-colors">
+                      {project.name}
+                    </h3>
+                    {project.location && (
+                      <div className="flex items-center gap-2 text-gray-300 text-sm">
+                        <FaMapMarkerAlt className="text-[#703BF7]" />
+                        {project.location}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-6 flex-1 flex flex-col justify-between">
+                  <p className="text-gray-400 line-clamp-3 mb-4">
+                    {project.description}
+                  </p>
+
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-[#333]">
+                    <span className="text-sm text-gray-500">
+                      {project.status || 'Development'}
+                    </span>
+                    <div className="flex items-center gap-2 text-[#703BF7] font-semibold text-sm group-hover:gap-3 transition-all">
+                      View Details <FaArrowRight />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -122,7 +134,7 @@ function DeveloperProperties() {
       </section>
 
       <footer className="bg-[#1a1a1a] py-6 text-center text-gray-400">
-        <p>© 2025 Tamalk. All Rights Reserved.</p>
+        <p>© 2025 Tamalak. All Rights Reserved.</p>
       </footer>
     </div>
   );

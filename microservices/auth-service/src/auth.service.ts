@@ -196,4 +196,13 @@ export class AuthService {
     }
     return { status: 'success', message: 'User deleted successfully' };
   }
+
+  async getUsersByRole(role: string): Promise<any> {
+    const users = await this.userModel.find({ role }).select('-password');
+    return {
+      status: 'success',
+      results: users.length,
+      data: { users },
+    };
+  }
 }

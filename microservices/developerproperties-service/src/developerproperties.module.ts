@@ -5,6 +5,7 @@ import { DeveloperPropertiesController } from './developerproperties.controller'
 import { DeveloperPropertiesService } from './developerproperties.service';
 import { DeveloperProperty, DeveloperPropertySchema } from './developerproperty.model';
 import { Developer, DeveloperSchema } from './developer.model';
+import { Project, ProjectSchema } from './project.model';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -15,6 +16,7 @@ dotenv.config();
     MongooseModule.forFeature([
       { name: DeveloperProperty.name, schema: DeveloperPropertySchema },
       { name: Developer.name, schema: DeveloperSchema },
+      { name: Project.name, schema: ProjectSchema },
     ]),
   ],
   controllers: [DeveloperPropertiesController],

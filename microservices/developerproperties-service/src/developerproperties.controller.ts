@@ -5,12 +5,52 @@ import { DeveloperPropertiesService } from './developerproperties.service';
 
 @Controller()
 export class DeveloperPropertiesController {
-  constructor(private readonly service: DeveloperPropertiesService) {}
+  constructor(private readonly service: DeveloperPropertiesService) { }
 
-  // Developer endpoints
-  @MessagePattern({ cmd: 'createDeveloper' })
-  async createDeveloper(@Payload() data: any) {
-    return this.service.createDeveloper(data);
+  // Project endpoints
+  @MessagePattern({ cmd: 'createProject' })
+  async createProject(@Payload() data: any) {
+    return this.service.createProject(data);
+  }
+
+  @MessagePattern({ cmd: 'getAllProjects' })
+  async getAllProjects() {
+    return this.service.getAllProjects();
+  }
+
+  @MessagePattern({ cmd: 'getProjectById' })
+  async getProjectById(@Payload() id: string) {
+    return this.service.getProjectById(id);
+  }
+
+  @MessagePattern({ cmd: 'getProjectsByUser' })
+  async getProjectsByUser(@Payload() userId: string) {
+    return this.service.getProjectsByUser(userId);
+  }
+
+  @MessagePattern({ cmd: 'updateProject' })
+  async updateProject(@Payload() data: { id: string; updateData: any }) {
+    return this.service.updateProject(data.id, data.updateData);
+  }
+
+  @MessagePattern({ cmd: 'deleteProject' })
+  async deleteProject(@Payload() id: string) {
+    return this.service.deleteProject(id);
+  }
+
+  @MessagePattern({ cmd: 'updateProjectForUser' })
+  async updateProjectForUser(@Payload() data: { userId: string; projectId: string; updateData: any }) {
+    return this.service.updateProjectForUser(data.userId, data.projectId, data.updateData);
+  }
+
+  @MessagePattern({ cmd: 'deleteProjectForUser' })
+  async deleteProjectForUser(@Payload() data: { userId: string; projectId: string }) {
+    return this.service.deleteProjectForUser(data.userId, data.projectId);
+  }
+
+  @MessagePattern({ cmd: 'createProjectForUser' })
+  async createProjectForUser(@Payload() data: { userId: string; projectData: any }) {
+    return this.service.createProject({ ...data.projectData, developerId: data.userId });
   }
 
   @MessagePattern({ cmd: 'getAllDevelopers' })
@@ -63,8 +103,38 @@ export class DeveloperPropertiesController {
     return this.service.deleteProperty(data.id, data.userId);
   }
 
-  @MessagePattern({ cmd: 'getPropertiesByDeveloper' })
-  async getPropertiesByDeveloper(@Payload() developerId: string) {
-    return this.service.getPropertiesByDeveloper(developerId);
+  @MessagePattern({ cmd: 'getPropertiesByProject' })
+  async getPropertiesByProject(@Payload() projectId: string) {
+    return this.service.getPropertiesByProject(projectId);
+  }
+
+  @MessagePattern({ cmd: 'createPropertyForProject' })
+  async createPropertyForProject(@Payload() data: { userId: string; projectId: string; propertyData: any }) {
+    return this.service.createPropertyForProject(data.userId, data.projectId, data.propertyData);
+  }
+
+  @MessagePattern({ cmd: 'getPropertiesByUser' })
+  async getPropertiesByUser(@Payload() userId: string) {
+    return this.service.getPropertiesByUser(userId);
+  }
+
+  @MessagePattern({ cmd: 'createPropertyForUser' })
+  async createPropertyForUser(@Payload() data: { userId: string; propertyData: any }) {
+    return this.service.createPropertyForUser(data.userId, data.propertyData);
+  }
+
+  @MessagePattern({ cmd: 'updatePropertyForUser' })
+  async updatePropertyForUser(@Payload() data: { userId: string; propertyId: string; updateData: any }) {
+    return this.service.updatePropertyForUser(data.userId, data.propertyId, data.updateData);
+  }
+
+  @MessagePattern({ cmd: 'deletePropertyForUser' })
+  async deletePropertyForUser(@Payload() data: { userId: string; propertyId: string }) {
+    return this.service.deletePropertyForUser(data.userId, data.propertyId);
+  }
+
+  @MessagePattern({ cmd: 'getProjectsWithPropertiesByDeveloper' })
+  async getProjectsWithPropertiesByDeveloper(@Payload() developerId: string) {
+    return this.service.getProjectsWithPropertiesByDeveloper(developerId);
   }
 }

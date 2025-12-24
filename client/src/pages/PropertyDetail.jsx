@@ -58,9 +58,20 @@ const PropertyDetail = () => {
         const response = await fetch(
           `http://localhost:3000/api/properties/${id}`
         );
+
         if (!response.ok) {
+          // If not found in standard properties, check if it's a developer property
+          const devResponse = await fetch(`http://127.0.0.1:3000/api/developer-properties/${id}`);
+          if (devResponse.ok) {
+            const devData = await devResponse.json();
+            if (devData?.data?.property) {
+              navigate(`/developer-property/${id}`, { replace: true });
+              return;
+            }
+          }
           throw new Error(`Failed to fetch property with ID: ${id}`);
         }
+
         const data = await response.json();
         setProperty(data.data.property);
       } catch (err) {
@@ -190,11 +201,10 @@ const PropertyDetail = () => {
                 <div
                   key={index}
                   onClick={() => handleImageNav(index)}
-                  className={`h-20 w-24 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer snap-start border-2 transition-all ${
-                    activeImage === index
-                      ? 'border-[#B983FF] scale-105 shadow-lg shadow-[#B983FF]/20'
-                      : 'border-transparent opacity-70'
-                  }`}
+                  className={`h-20 w-24 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer snap-start border-2 transition-all ${activeImage === index
+                    ? 'border-[#B983FF] scale-105 shadow-lg shadow-[#B983FF]/20'
+                    : 'border-transparent opacity-70'
+                    }`}
                 >
                   <img
                     src={media[index] || media[0]}
@@ -308,11 +318,10 @@ const PropertyDetail = () => {
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 <div
-                  className={`flex items-center gap-2 p-3 rounded-lg ${
-                    features.garage
-                      ? 'bg-[#7F00FF]/20'
-                      : 'bg-white/5 opacity-60'
-                  }`}
+                  className={`flex items-center gap-2 p-3 rounded-lg ${features.garage
+                    ? 'bg-[#7F00FF]/20'
+                    : 'bg-white/5 opacity-60'
+                    }`}
                 >
                   <FaCarAlt
                     className={
@@ -323,9 +332,8 @@ const PropertyDetail = () => {
                 </div>
 
                 <div
-                  className={`flex items-center gap-2 p-3 rounded-lg ${
-                    features.pool ? 'bg-[#7F00FF]/20' : 'bg-white/5 opacity-60'
-                  }`}
+                  className={`flex items-center gap-2 p-3 rounded-lg ${features.pool ? 'bg-[#7F00FF]/20' : 'bg-white/5 opacity-60'
+                    }`}
                 >
                   <FaSwimmingPool
                     className={
@@ -336,9 +344,8 @@ const PropertyDetail = () => {
                 </div>
 
                 <div
-                  className={`flex items-center gap-2 p-3 rounded-lg ${
-                    features.yard ? 'bg-[#7F00FF]/20' : 'bg-white/5 opacity-60'
-                  }`}
+                  className={`flex items-center gap-2 p-3 rounded-lg ${features.yard ? 'bg-[#7F00FF]/20' : 'bg-white/5 opacity-60'
+                    }`}
                 >
                   <FaTree
                     className={
@@ -349,9 +356,8 @@ const PropertyDetail = () => {
                 </div>
 
                 <div
-                  className={`flex items-center gap-2 p-3 rounded-lg ${
-                    features.pets ? 'bg-[#7F00FF]/20' : 'bg-white/5 opacity-60'
-                  }`}
+                  className={`flex items-center gap-2 p-3 rounded-lg ${features.pets ? 'bg-[#7F00FF]/20' : 'bg-white/5 opacity-60'
+                    }`}
                 >
                   <FaPaw
                     className={
@@ -362,11 +368,10 @@ const PropertyDetail = () => {
                 </div>
 
                 <div
-                  className={`flex items-center gap-2 p-3 rounded-lg ${
-                    features.furnished
-                      ? 'bg-[#7F00FF]/20'
-                      : 'bg-white/5 opacity-60'
-                  }`}
+                  className={`flex items-center gap-2 p-3 rounded-lg ${features.furnished
+                    ? 'bg-[#7F00FF]/20'
+                    : 'bg-white/5 opacity-60'
+                    }`}
                 >
                   <FaCouch
                     className={
