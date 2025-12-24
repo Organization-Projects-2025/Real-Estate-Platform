@@ -11,6 +11,8 @@ import { AgentController } from './agent/agent.controller';
 import { AgentService } from './agent/agent.service';
 import { DeveloperPropertiesController } from './developerproperties/developerproperties.controller';
 import { DeveloperPropertiesService } from './developerproperties/developerproperties.service';
+import { AdminController } from './admin/admin.controller';
+import { AdminService } from './admin/admin.service';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -58,9 +60,17 @@ dotenv.config();
           port: parseInt(process.env.DEVELOPERPROPERTIES_SERVICE_PORT) || 3006,
         },
       },
+      {
+        name: 'ADMIN_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: process.env.ADMIN_SERVICE_HOST || '127.0.0.1',
+          port: parseInt(process.env.ADMIN_SERVICE_PORT) || 3005,
+        },
+      },
     ]),
   ],
-  controllers: [AuthController, PropertyController, ReviewController, AgentController, DeveloperPropertiesController],
-  providers: [AuthService, PropertyService, ReviewService, AgentService, DeveloperPropertiesService],
+  controllers: [AuthController, PropertyController, ReviewController, AgentController, DeveloperPropertiesController, AdminController],
+  providers: [AuthService, PropertyService, ReviewService, AgentService, DeveloperPropertiesService, AdminService],
 })
 export class AppModule {}

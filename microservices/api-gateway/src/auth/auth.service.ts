@@ -49,6 +49,10 @@ export class AuthService {
     return firstValueFrom(this.authClient.send({ cmd: 'getUserById' }, userId));
   }
 
+  async updateUser(userId: string, userData: any): Promise<any> {
+    return firstValueFrom(this.authClient.send({ cmd: 'updateUser' }, { userId, userData }));
+  }
+
   async deleteUser(userId: string): Promise<any> {
     return firstValueFrom(this.authClient.send({ cmd: 'deleteUser' }, userId));
   }

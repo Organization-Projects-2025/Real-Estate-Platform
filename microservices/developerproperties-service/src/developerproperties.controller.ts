@@ -90,13 +90,17 @@ export class DeveloperPropertiesController {
   }
 
   @MessagePattern({ cmd: 'updateDeveloperProperty' })
-  async updateProperty(@Payload() data: { id: string; updateData: any }) {
-    return this.service.updateProperty(data.id, data.updateData);
+  async updateProperty(@Payload() data: { id: string; updateData: any; userId?: string }) {
+    return this.service.updateProperty(data.id, data.updateData, data.userId);
   }
 
   @MessagePattern({ cmd: 'deleteDeveloperProperty' })
-  async deleteProperty(@Payload() id: string) {
-    return this.service.deleteProperty(id);
+  async deleteProperty(@Payload() data: { id: string; userId?: string } | string) {
+    // Support both old format (just id string) and new format (object with id and userId)
+    if (typeof data === 'string') {
+      return this.service.deleteProperty(data);
+    }
+    return this.service.deleteProperty(data.id, data.userId);
   }
 
   @MessagePattern({ cmd: 'getPropertiesByProject' })

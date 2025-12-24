@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -12,11 +12,14 @@ export default function Sell() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
+  const [propertyTypeFilters, setPropertyTypeFilters] = useState([]);
+  const [amenityFilters, setAmenityFilters] = useState([]);
+  const [featureFilters, setFeatureFilters] = useState([]);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     listingType: 'sale',
-    propertyType: 'residential',
+    propertyType: '',
     subType: '',
     address: {
       street: '',
@@ -48,12 +51,86 @@ export default function Sell() {
       gas: false,
       wifi: false,
       security: false,
+      custom: {},
     },
   });
   const [pendingFiles, setPendingFiles] = useState([]);
   const [uploadProgress, setUploadProgress] = useState({});
   const [uploadStatus, setUploadStatus] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const featureNameToKey = (name) => {
+    const normalized = String(name || '').trim().toLowerCase();
+
+    if (normalized === 'pool') return 'pool';
+    if (normalized === 'yard') return 'yard';
+    if (normalized === 'pets' || normalized === 'pets allowed') return 'pets';
+
+    if (normalized === 'air conditioning') return 'airConditioning';
+    if (normalized === 'internet') return 'internet';
+    if (normalized === 'electricity') return 'electricity';
+    if (normalized === 'water') return 'water';
+    if (normalized === 'gas') return 'gas';
+    if (normalized === 'wifi') return 'wifi';
+    if (normalized === 'security') return 'security';
+
+    return null;
+  };
+
+  // Fetch dynamic filters
+  useEffect(() => {
+    fetch('http://localhost:3000/api/filters?category=property-type')
+      .then((res) => res.json())
+      .then((data) => {
+        const filters = Array.isArray(data) ? data : [];
+        setPropertyTypeFilters(filters);
+        // Set first filter as default if available
+        if (filters.length > 0 && !formData.propertyType) {
+          setFormData((prev) => ({
+            ...prev,
+            propertyType: filters[0].name,
+          }));
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching filters:', err);
+        // Fallback to basic options
+        setPropertyTypeFilters([
+          { _id: '1', name: 'Residential', category: 'property-type' },
+          { _id: '2', name: 'Commercial', category: 'property-type' },
+        ]);
+      });
+
+    fetch('http://localhost:3000/api/filters?category=amenities')
+      .then((res) => res.json())
+      .then((data) => {
+        setAmenityFilters(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error('Error fetching amenities filters:', err);
+        setAmenityFilters([
+          { _id: 'pool', name: 'Pool', category: 'amenities' },
+        ]);
+      });
+
+    fetch('http://localhost:3000/api/filters?category=features')
+      .then((res) => res.json())
+      .then((data) => {
+        setFeatureFilters(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error('Error fetching features filters:', err);
+        setFeatureFilters([
+          { _id: 'ac', name: 'Air Conditioning', category: 'features' },
+          { _id: 'internet', name: 'Internet', category: 'features' },
+          { _id: 'electricity', name: 'Electricity', category: 'features' },
+          { _id: 'water', name: 'Water', category: 'features' },
+          { _id: 'gas', name: 'Gas', category: 'features' },
+          { _id: 'wifi', name: 'Wifi', category: 'features' },
+          { _id: 'security', name: 'Security', category: 'features' },
+        ]);
+      });
+  }, []);
 
   const inputClass =
     'w-full p-4 bg-[#1a1a1a] text-white placeholder-gray-400 rounded-2xl shadow-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-600';
@@ -66,6 +143,21 @@ export default function Sell() {
   const handleChange = (e) => {
     const { name, type, files, value, checked } = e.target;
     if (type === 'checkbox') {
+      if (name.startsWith('custom.')) {
+        const customId = name.split('.')[1];
+        setFormData((prev) => ({
+          ...prev,
+          features: {
+            ...prev.features,
+            custom: {
+              ...(prev.features?.custom || {}),
+              [customId]: checked,
+            },
+          },
+        }));
+        return;
+      }
+
       setFormData((prev) => ({
         ...prev,
         features: { ...prev.features, [name]: checked },
@@ -304,8 +396,12 @@ export default function Sell() {
                 value={formData.propertyType}
                 onChange={handleChange}
               >
-                <option value="residential">Residential</option>
-                <option value="commercial">Commercial</option>
+                <option value="">Select Property Type</option>
+                {propertyTypeFilters.map((filter) => (
+                  <option key={filter._id} value={filter.name}>
+                    {filter.name}
+                  </option>
+                ))}
               </select>
               <input
                 className={inputClass}
@@ -495,6 +591,20 @@ export default function Sell() {
           </div>
         );
       case 3:
+        const combinedFeatureFilters = [...(amenityFilters || []), ...(featureFilters || [])];
+
+        const primaryAmenityKeys = ['pool', 'yard', 'pets'];
+        const primaryAmenityFilters = combinedFeatureFilters
+          .map((f) => ({ ...f, _mappedKey: featureNameToKey(f.name) }))
+          .filter((f) => primaryAmenityKeys.includes(f._mappedKey));
+
+        const secondaryFeatureFilters = (featureFilters || [])
+          .map((f) => ({ ...f, _mappedKey: featureNameToKey(f.name) }))
+          .filter((f) => !primaryAmenityKeys.includes(f._mappedKey));
+
+        const knownFeatureFilters = secondaryFeatureFilters.filter((f) => Boolean(f._mappedKey));
+        const customFeatureFilters = secondaryFeatureFilters.filter((f) => !f._mappedKey);
+
         return (
           <div className="space-y-6">
             <div className="grid md:grid-cols-3 gap-4">
@@ -512,21 +622,19 @@ export default function Sell() {
               ))}
             </div>
             <div className="grid md:grid-cols-4 gap-4">
-              {['pool', 'yard', 'pets'].map((key) => (
+              {primaryAmenityFilters.map((filter) => (
                 <label
-                  key={key}
+                  key={filter._id}
                   className="flex items-center p-4 bg-[#1a1a1a] rounded-2xl shadow-md cursor-pointer"
                 >
                   <input
                     className={checkboxClass}
-                    name={key}
+                    name={filter._mappedKey}
                     type="checkbox"
-                    checked={formData.features[key]}
+                    checked={Boolean(formData.features[filter._mappedKey])}
                     onChange={handleChange}
                   />
-                  <span className="ml-2 capitalize">
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                  </span>
+                  <span className="ml-2">{filter.name}</span>
                 </label>
               ))}
               <select
@@ -541,32 +649,35 @@ export default function Sell() {
               </select>
             </div>
             <div className="grid md:grid-cols-4 gap-4">
-              {[
-                'airConditioning',
-                'internet',
-                'electricity',
-                'water',
-                'gas',
-                'wifi',
-                'security',
-              ].map((key) => (
+              {knownFeatureFilters.map((filter) => (
                 <label
-                  key={key}
+                  key={filter._id}
                   className="flex items-center p-4 bg-[#1a1a1a] rounded-2xl shadow-md cursor-pointer"
                 >
                   <input
                     className={checkboxClass}
-                    name={key}
+                    name={filter._mappedKey}
                     type="checkbox"
-                    checked={formData.features[key]}
+                    checked={Boolean(formData.features[filter._mappedKey])}
                     onChange={handleChange}
                   />
-                  <span className="ml-2">
-                    {key
-                      .replace(/([A-Z])/g, ' $1')
-                      .charAt(0)
-                      .toUpperCase() + key.replace(/([A-Z])/g, ' $1').slice(1)}
-                  </span>
+                  <span className="ml-2">{filter.name}</span>
+                </label>
+              ))}
+
+              {customFeatureFilters.map((filter) => (
+                <label
+                  key={filter._id}
+                  className="flex items-center p-4 bg-[#1a1a1a] rounded-2xl shadow-md cursor-pointer"
+                >
+                  <input
+                    className={checkboxClass}
+                    name={`custom.${filter._id}`}
+                    type="checkbox"
+                    checked={Boolean(formData.features?.custom?.[filter._id])}
+                    onChange={handleChange}
+                  />
+                  <span className="ml-2">{filter.name}</span>
                 </label>
               ))}
             </div>

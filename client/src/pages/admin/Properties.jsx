@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { getAllProperties, deleteProperty, updateProperty } from '../../services/adminService';
 import { FaEdit, FaTrash, FaHome, FaBed, FaBath, FaCar, FaSwimmingPool, FaWifi, FaSnowflake, FaShieldAlt } from 'react-icons/fa';
 
@@ -83,14 +84,14 @@ function Properties() {
       try {
         const response = await deleteProperty(propertyId);
         if (response.status === 'success') {
-        setProperties(properties.filter(property => property._id !== propertyId));
-          setError(null);
+          setProperties(properties.filter(property => property._id !== propertyId));
+          toast.success('Property deleted successfully!');
         } else {
-          setError(response.message || 'Failed to delete property');
+          toast.error(response.message || 'Failed to delete property');
         }
       } catch (err) {
         console.error('Delete property error:', err);
-        setError(err.response?.data?.message || 'Failed to delete property. Please try again.');
+        toast.error(err.response?.data?.message || 'Failed to delete property');
       }
     }
   };
@@ -103,8 +104,9 @@ function Properties() {
         property._id === editingProperty._id ? response.data.property : property
       ));
       setEditingProperty(null);
+      toast.success('Property updated successfully!');
     } catch {
-      setError('Failed to update property');
+      toast.error('Failed to update property');
     }
   };
 

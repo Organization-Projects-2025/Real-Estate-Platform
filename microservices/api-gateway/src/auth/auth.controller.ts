@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Post, Get, Put, Delete, Body, Param, Res, HttpStatus, Req, UseFilters } from '@nestjs/common';
+import { Controller, Post, Get, Put, Patch, Delete, Body, Param, Res, HttpStatus, Req, UseFilters } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 
@@ -210,6 +210,19 @@ export class AuthController {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         status: 'error',
         message: error.message || 'Failed to fetch user',
+      });
+    }
+  }
+
+  @Patch('users/:id')
+  async updateUser(@Param('id') id: string, @Body() body: any, @Res() res: Response) {
+    try {
+      const result = await this.authService.updateUser(id, body);
+      return res.status(HttpStatus.OK).json(result);
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        status: 'error',
+        message: error.message || 'Failed to update user',
       });
     }
   }
