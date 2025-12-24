@@ -32,50 +32,54 @@ import ManageDeveloperProperties from './pages/ManageDeveloperProperties';
 import MyDeveloperProperties from './pages/MyDeveloperProperties';
 import MyProjects from './pages/MyProjects';
 import ProjectProperties from './pages/ProjectProperties';
+import PublicProjectDetails from './pages/PublicProjectDetails';
+import DeveloperPropertyDetail from './pages/DeveloperPropertyDetail';
 
 const App = () => {
   return (
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forget-password" element={<ForgetPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/rent" element={<Rent />} />
-        <Route path="/buy" element={<Buy />} />
-        <Route path="/sell" element={<Sell />} />
-        <Route path="/agent" element={<Agent />} />
-        <Route path="/become-agent" element={<BecomeAgent />} />
-        <Route path="/create-agent" element={<CreateAgent />} />
-        <Route path="/manage-agents" element={<ManageAgents />} />
-        <Route path="/property/:id" element={<PropertyDetail />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/reviews" element={<Reviews />} />
-        <Route path="/write-review" element={<ReviewForm />} />
-        <Route path="/developer-properties" element={<DeveloperProperties />} />
-        <Route path="/developer-properties/:developerId" element={<DeveloperPropertiesDetail />} />
-        <Route path="/manage-developer-properties" element={<ManageDeveloperProperties />} />
-        <Route path="/my-developer-properties" element={<MyDeveloperProperties />} />
-        <Route path="/my-projects" element={<MyProjects />} />
-        <Route path="/project/:projectId/properties" element={<ProjectProperties />} />
+    <Routes>
+      {/* Public routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forget-password" element={<ForgetPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
+      <Route path="/rent" element={<Rent />} />
+      <Route path="/buy" element={<Buy />} />
+      <Route path="/sell" element={<Sell />} />
+      <Route path="/agent" element={<Agent />} />
+      <Route path="/become-agent" element={<BecomeAgent />} />
+      <Route path="/create-agent" element={<CreateAgent />} />
+      <Route path="/manage-agents" element={<ManageAgents />} />
+      <Route path="/property/:id" element={<PropertyDetail />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/notifications" element={<Notifications />} />
+      <Route path="/reviews" element={<Reviews />} />
+      <Route path="/write-review" element={<ReviewForm />} />
+      <Route path="/developer-properties" element={<DeveloperProperties />} />
+      <Route path="/developer-properties/:developerId" element={<DeveloperPropertiesDetail />} />
+      <Route path="/projects/:projectId" element={<PublicProjectDetails />} />
+      <Route path="/developer-property/:id" element={<DeveloperPropertyDetail />} />
+      <Route path="/manage-developer-properties" element={<ManageDeveloperProperties />} />
+      <Route path="/my-developer-properties" element={<MyDeveloperProperties />} />
+      <Route path="/my-projects" element={<MyProjects />} />
+      <Route path="/project/:projectId/properties" element={<ProjectProperties />} />
 
-        {/* Protected admin routes */}
-        <Route element={<ProtectedAdminRoute />}>
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="users" element={<Users />} />
-            <Route path="properties" element={<Properties />} />
-            <Route path="reviews" element={<AdminReviews />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
+      {/* Protected admin routes */}
+      <Route element={<ProtectedAdminRoute />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="users" element={<Users />} />
+          <Route path="properties" element={<Properties />} />
+          <Route path="reviews" element={<AdminReviews />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
+      </Route>
 
-        {/* 404 route */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      {/* 404 route */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 

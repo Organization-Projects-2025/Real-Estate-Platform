@@ -12,7 +12,7 @@ export class DeveloperPropertiesService {
     @InjectModel(DeveloperProperty.name) private developerPropertyModel: Model<DeveloperProperty>,
     @InjectModel(Developer.name) private developerModel: Model<Developer>,
     @InjectModel(Project.name) private projectModel: Model<Project>,
-  ) {}
+  ) { }
 
   // Project CRUD
   async createProject(data: any): Promise<any> {
@@ -86,12 +86,12 @@ export class DeveloperPropertiesService {
     if (!project) {
       throw new HttpException('Project not found or you do not have permission to edit it', HttpStatus.NOT_FOUND);
     }
-    
+
     const updatedProject = await this.projectModel.findByIdAndUpdate(projectId, data, {
       new: true,
       runValidators: true,
     });
-    
+
     return {
       status: 'success',
       data: { project: updatedProject },
@@ -103,7 +103,7 @@ export class DeveloperPropertiesService {
     if (!project) {
       throw new HttpException('Project not found or you do not have permission to delete it', HttpStatus.NOT_FOUND);
     }
-    
+
     await this.projectModel.findByIdAndDelete(projectId);
     return {
       status: 'success',
@@ -183,7 +183,7 @@ export class DeveloperPropertiesService {
   }
 
   async getAllProperties(): Promise<any> {
-    const properties = await this.developerPropertyModel.find().populate('developerId');
+    const properties = await this.developerPropertyModel.find().populate('projectId');
     return {
       status: 'success',
       results: properties.length,
@@ -192,14 +192,18 @@ export class DeveloperPropertiesService {
   }
 
   async getPropertyById(id: string): Promise<any> {
-    const property = await this.developerPropertyModel.findById(id).populate('developerId');
-    if (!property) {
-      throw new HttpException('Property not found', HttpStatus.NOT_FOUND);
+    try {
+      const property = await this.developerPropertyModel.findById(id);
+      if (!property) {
+        throw new HttpException('Property not found', HttpStatus.NOT_FOUND);
+      }
+      return {
+        status: 'success',
+        data: { property },
+      };
+    } catch (error) {
+      throw new HttpException(error.message || 'Error fetching developer property', error.status || HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return {
-      status: 'success',
-      data: { property },
-    };
   }
 
   async updateProperty(id: string, data: any): Promise<any> {
@@ -256,7 +260,7 @@ export class DeveloperPropertiesService {
   }
 
   async getPropertiesByUser(userId: string): Promise<any> {
-    const properties = await this.developerPropertyModel.find({ developerId: userId }).populate('projectId');
+    const properties = await this.developerPropertyModel.find({ developerId: userId });
     return {
       status: 'success',
       results: properties.length,
@@ -282,12 +286,12 @@ export class DeveloperPropertiesService {
     if (!property) {
       throw new HttpException('Property not found or you do not have permission to edit it', HttpStatus.NOT_FOUND);
     }
-    
+
     const updatedProperty = await this.developerPropertyModel.findByIdAndUpdate(propertyId, data, {
       new: true,
       runValidators: true,
-    }).populate('projectId');
-    
+    });
+
     return {
       status: 'success',
       data: { property: updatedProperty },
@@ -299,11 +303,41 @@ export class DeveloperPropertiesService {
     if (!property) {
       throw new HttpException('Property not found or you do not have permission to delete it', HttpStatus.NOT_FOUND);
     }
-    
+
     await this.developerPropertyModel.findByIdAndDelete(propertyId);
     return {
       status: 'success',
       message: 'Property deleted successfully',
     };
+  }
+  async getProjectsWithPropertiesByDeveloper(developerId: string): Promise<any> {
+    try {
+      // Fetch all projects for the developer
+      const projects = await this.projectModel.find({ developerId }).lean().exec();
+
+      // Fetch all properties for the developer
+      const properties = await this.developerPropertyModel.find({ developerId }).lean().exec();
+
+      // Map properties to projects
+      const projectsWithProperties = projects.map((project) => {
+        const projectProperties = properties.filter(
+          (property) => String(property.projectId) === String(project._id)
+        );
+
+        return {
+          ...project,
+          properties: projectProperties,
+        };
+      });
+
+      return {
+        status: 'success',
+        results: projectsWithProperties.length,
+        data: { projects: projectsWithProperties },
+      };
+    } catch (error) {
+      console.error('Error in getProjectsWithPropertiesByDeveloper:', error);
+      throw new HttpException(error.message || 'Failed to fetch projects with properties', HttpStatus.BAD_REQUEST);
+    }
   }
 }

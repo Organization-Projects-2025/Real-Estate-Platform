@@ -8,20 +8,20 @@ function DeveloperPropertiesDetail() {
   const { developerId } = useParams();
   const navigate = useNavigate();
   const [developer, setDeveloper] = useState(null);
-  const [properties, setProperties] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
-      fetch(`http://localhost:3000/api/developers/${developerId}`).then(res => res.json()),
-      fetch(`http://localhost:3000/api/developer-properties/developer/${developerId}`).then(res => res.json())
+      fetch(`http://127.0.0.1:3000/api/developers/${developerId}`).then(res => res.json()),
+      fetch(`http://127.0.0.1:3000/api/projects-with-properties/developer/${developerId}`).then(res => res.json())
     ])
-      .then(([devData, propData]) => {
+      .then(([devData, projData]) => {
         if (devData?.data?.developer) {
           setDeveloper(devData.data.developer);
         }
-        if (propData?.data?.properties) {
-          setProperties(propData.data.properties);
+        if (projData?.data?.projects) {
+          setProjects(projData.data.projects);
         }
         setLoading(false);
       })
@@ -55,7 +55,7 @@ function DeveloperPropertiesDetail() {
   return (
     <div className="bg-[#121212] text-[#fff] min-h-screen">
       <Navbar />
-      
+
       <section className="px-6 md:px-16 py-10">
         <button
           onClick={() => navigate('/developer-properties')}
@@ -94,17 +94,37 @@ function DeveloperPropertiesDetail() {
         )}
 
         <h2 className="text-3xl font-bold mb-6">
-          Properties by {developer?.name}
+          Projects by {developer?.name}
         </h2>
-        
-        {properties.length === 0 ? (
+
+        {projects.length === 0 ? (
           <p className="text-center text-gray-400 py-10">
-            No properties found for this developer.
+            No projects found for this developer.
           </p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {properties.map((property) => (
-              <PropertyCard key={property._id} property={property} />
+          <div className="space-y-12">
+            {projects.map((project) => (
+              <div key={project._id} className="border-b border-[#252525] pb-10 last:border-0 hover:bg-[#1a1a1a] p-6 rounded-xl transition-all">
+                <div className="mb-6">
+                  <h3 className="text-2xl font-bold text-[#703BF7] mb-2">{project.name}</h3>
+                  <p className="text-gray-400">{project.description}</p>
+                  <p className="text-sm text-gray-500 mt-1">{project.location} • Status: {project.status}</p>
+                </div>
+
+                {project.properties && project.properties.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {project.properties.map((property) => (
+                      <PropertyCard
+                        key={property._id}
+                        property={{ ...property, media: property.images || [] }}
+                        to={`/developer-property/${property._id}`}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 italic">No properties listed in this project yet.</p>
+                )}
+              </div>
             ))}
           </div>
         )}

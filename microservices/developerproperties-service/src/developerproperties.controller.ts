@@ -5,7 +5,7 @@ import { DeveloperPropertiesService } from './developerproperties.service';
 
 @Controller()
 export class DeveloperPropertiesController {
-  constructor(private readonly service: DeveloperPropertiesService) {}
+  constructor(private readonly service: DeveloperPropertiesService) { }
 
   // Project endpoints
   @MessagePattern({ cmd: 'createProject' })
@@ -127,5 +127,10 @@ export class DeveloperPropertiesController {
   @MessagePattern({ cmd: 'deletePropertyForUser' })
   async deletePropertyForUser(@Payload() data: { userId: string; propertyId: string }) {
     return this.service.deletePropertyForUser(data.userId, data.propertyId);
+  }
+
+  @MessagePattern({ cmd: 'getProjectsWithPropertiesByDeveloper' })
+  async getProjectsWithPropertiesByDeveloper(@Payload() developerId: string) {
+    return this.service.getProjectsWithPropertiesByDeveloper(developerId);
   }
 }
